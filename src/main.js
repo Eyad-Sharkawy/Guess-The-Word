@@ -65,5 +65,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  
+  function checkRow(row, answer) {
+    const currentInputs = Array.from(row.querySelectorAll(".game__input-letter"));
+    const answerArray = answer.toUpperCase().split("");
+
+    const usedIndices = new Set();
+
+    currentInputs.forEach((input, index) => {
+      if (input.value.toUpperCase() === answerArray[index]) {
+        input.classList.add("game__input-letter--inplace");
+        usedIndices.add(index);
+      }
+    });
+
+    currentInputs.forEach((input, index) => {
+      if (usedIndices.has(index)) {
+        return;
+      }
+
+      const letter = input.value.toUpperCase();
+      if (!letter) {
+        return;
+      }
+
+      const foundIndex = answerArray.findIndex((char, i) => !usedIndices.has(i) && char === letter);
+
+      if (foundIndex !== -1) {
+        input.classList.add("game__input-letter--correct");
+        usedIndices.add(foundIndex);
+      } else {
+        input.classList.add("game__input-letter--wrong");
+      }
+    });
+  }
+
+  function disableRow(row) {
+    const currentInputs = Array.from(row.querySelectorAll(".game__input-letter"));
+
+    currentInputs.forEach((input) => {
+      input.disabled = true;
+    });
+  }
+
+  function enableRow(row) {
+    const currentInputs = Array.from(row.querySelectorAll(".game__input-letter"));
+
+    currentInputs.forEach((input) => {
+      input.disabled = false;
+    });
+  }
+
+
 });
