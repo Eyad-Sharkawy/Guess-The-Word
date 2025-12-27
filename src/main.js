@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const allInputs = document.querySelectorAll(".game__input-letter");
   const checkWordBtn = document.querySelector(".game__btn--check-word");
   const restartBtn = document.querySelector(".game__btn--restart");
-  let correctCount = 0;
   let correctIndices = new Set();
   let currentRow = 0;
 
@@ -31,13 +30,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const currentIndex = rowInputs.indexOf(input);
 
     input.addEventListener('input', event => {
-      if (event.target.value) event.preventDefault();
-
-      if (!event.target.value) {
-        event.target.value = event.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+      let value = event.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+      // Limit to one character
+      if (value.length > 1) {
+        value = value.charAt(0);
       }
+      event.target.value = value;
 
-      if (event.target.value && index < allInputs.length - 1) {
+      if (event.target.value && currentIndex < rowInputs.length - 1) {
         for (let i = currentIndex + 1; i < rowInputs.length; ++i) {
           if (!rowInputs[i].disabled) {
             rowInputs[i].focus();
@@ -52,6 +52,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!inputsAreFull(currentRow)) {
         checkWordBtn.disabled = true;
+      }
+    });
+
+    // Handle paste events to prevent pasting multiple characters
+    input.addEventListener('paste', event => {
+      event.preventDefault();
+      const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+      const firstLetter = pastedText.replace(/[^a-zA-Z]/g, '').charAt(0).toUpperCase();
+      if (firstLetter) {
+        event.target.value = firstLetter;
+        // Trigger input event to handle auto-advance
+        event.target.dispatchEvent(new Event('input', { bubbles: true }));
       }
     });
 
@@ -109,12 +121,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const answerArray = answer.toUpperCase().split("");
 
     const usedIndices = new Set();
+    let rowCorrectCount = 0;
 
     currentInputs.forEach((input, index) => {
       if (input.value.toUpperCase() === answerArray[index]) {
         input.classList.add("game__input-letter--inplace");
         usedIndices.add(index);
-        ++correctCount;
+        ++rowCorrectCount;
         correctIndices.add(index);
       }
     });
@@ -157,10 +170,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function transitionToNextStage(rowNumber, answer) {
-    checkRow(inputRows[rowNumber], answer);
+    const rowCorrectCount = checkRow(inputRows[rowNumber], answer);
     disableRow(inputRows[rowNumber]);
 
-    if (correctCount === 6) {
+    if (rowCorrectCount === 6) {
       document.querySelector(".message").innerHTML = `<p>You Won! The word was ${correctAnswer.toLowerCase()}</p>`;
     }
     else if (rowNumber === 5) {
@@ -181,7 +194,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const inputInRow = inputRows[rowNumber + 1].querySelectorAll(".game__input-letter");
 
-      for (let i = 0; i < 6; ++i) {
+      for (let i = 0; i < inputInRow.length; ++i) {
         if (!inputInRow[i].disabled) {
           inputInRow[i].focus();
           break;
@@ -197,7 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   restartBtn.addEventListener("click", _ => {
     location.reload();
-  })
+  });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
