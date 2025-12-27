@@ -152,15 +152,15 @@ main {
 }
 
 .game__input-letter--inplace {
-    background-color: #83D4BB;
+    background-color: #83D4BB !important;
 }
 
 .game__input-letter--correct {
-    background-color: #F3C680;
+    background-color: #F3C680 !important;
 }
 
 .game__input-letter--wrong {
-    background-color: #f56b61;
+    background-color: #f56b61 !important;
 }
 
 .game__btns {
