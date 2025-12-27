@@ -115,5 +115,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  function transitionToNextRow(rowNumber, answer) {
+    checkRow(inputRows[rowNumber], answer);
+    disableRow(inputRows[rowNumber]);
+    enableRow(inputRows[rowNumber + 1]);
+
+    const firstInputInRow = inputRows[rowNumber + 1].querySelector(".game__input-letter");
+    firstInputInRow.focus();
+  }
+
 
 });
