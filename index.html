@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>guess-the-word</title>
+</head>
+<body>
+<header class="main-header">
+    <h1>Guess the word</h1>
+</header>
+<main>
+    <div class="container">
+        <div class="game">
+            <ul class="game__rows">
+                <li class="game__row game__row--one">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1">
+                    </div>
+                </li>
+
+                <li class="game__row game__row--two">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                    </div>
+                </li>
+
+                <li class="game__row game__row--three">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                    </div>
+                </li>
+
+                <li class="game__row game__row--four">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                    </div>
+                </li>
+
+                <li class="game__row game__row--five">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                    </div>
+                </li>
+
+                <li class="game__row game__row--six">
+                    <div class="game__inputs">
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                        <input type="text" name="letter" class="game__input-letter" maxlength="1" disabled>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="game__btns">
+                <button class="game__btn game__btn--check-word" disabled>Check Word</button>
+                <button class="game__btn game__btn--hint">Hint</button>
+                <button class="game__btn game__btn--restart">Restart</button>
+            </div>
+        </div>
+
+        <div class="legend">
+            <header>
+                <h2>Legend</h2>
+            </header>
+            <div class="legend__items">
+                <div class="legend__item legend__item--one">
+                    <span class="legend__indicator legend__indicator--green"></span>
+                    <p class="legend__label">
+                        Letter is correct and in place
+                    </p>
+                </div>
+                <div class="legend__item legend__item--two">
+                    <span class="legend__indicator legend__indicator--yellow"></span>
+                    <p class="legend__label">
+                        Letter is correct but isn't in place
+                    </p>
+                </div>
+                <div class="legend__item legend__item--three">
+                    <span class="legend__indicator legend__indicator--red"></span>
+                    <p class="legend__label">
+                        Letter isn't correct
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
