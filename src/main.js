@@ -124,5 +124,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     firstInputInRow.focus();
   }
 
+  checkWordBtn.addEventListener("click", _ => {
+    transitionToNextRow(currentRow, correctAnswer);
+    ++currentRow;
+  });
 
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      if (inputsAreFull(inputRows[currentRow])) {
+        event.preventDefault();
+        transitionToNextRow(currentRow, correctAnswer);
+        ++currentRow;
+      }
+    }
+  });
 });
