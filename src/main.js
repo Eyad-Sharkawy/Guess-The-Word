@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const inputRows = document.querySelectorAll(".game__inputs");
   const allInputs = document.querySelectorAll(".game__input-letter");
   const checkWordBtn = document.querySelector(".game__btn--check-word");
+  const restartBtn = document.querySelector(".game__btn--restart");
   let correctCount = 0;
   let correctIndices = new Set();
   let currentRow = 0;
@@ -189,6 +190,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     transitionToNextStage(currentRow, correctAnswer);
     ++currentRow;
   });
+
+  restartBtn.addEventListener("click", _ => {
+    location.reload();
+  })
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
