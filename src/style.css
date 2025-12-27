@@ -207,7 +207,7 @@ main {
 }
 
 @media (max-width: 576px) {
-    .game__input {
+    .game__input-letter {
         flex: 0 0 50px;
         height: 50px;
         max-width: 50px;
@@ -219,7 +219,7 @@ main {
 }
 
 @media (max-width: 400px) {
-    .game__input {
+    .game__input-letter {
         flex: 0 0 40px;
         height: 40px;
         max-width: 40px;
@@ -231,7 +231,7 @@ main {
 }
 
 @media (max-width: 330px) {
-    .game__input {
+    .game__input-letter {
         flex: 0 0 30px;
         height: 30px;
         max-width: 30px;
