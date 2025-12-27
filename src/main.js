@@ -9,13 +9,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     return data[0].toUpperCase();
   }
 
-  let correctAnswer = await fetchAnswer();
-  console.log(correctAnswer);
+  let correctAnswer;
+  try {
+    correctAnswer = await fetchAnswer();
+    console.log(correctAnswer);
+  } catch (error) {
+    console.error('Failed to fetch word:', error);
+    // Fallback word if API fails
+    correctAnswer = 'WORDLE';
+  }
 
   const inputRows = document.querySelectorAll(".game__inputs");
   const allInputs = document.querySelectorAll(".game__input-letter");
   const checkWordBtn = document.querySelector(".game__btn--check-word");
   const restartBtn = document.querySelector(".game__btn--restart");
+  const hintBtn = document.querySelector(".game__btn--hint");
   let correctIndices = new Set();
   let currentRow = 0;
 
@@ -25,8 +33,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   allInputs.forEach((input, index) => {
-    const currentRow = input.closest('.game__inputs');
-    const rowInputs = Array.from(currentRow.querySelectorAll('.game__input-letter'));
+    const inputRow = input.closest('.game__inputs');
+    const rowInputs = Array.from(inputRow.querySelectorAll('.game__input-letter'));
     const currentIndex = rowInputs.indexOf(input);
 
     input.addEventListener('input', event => {
@@ -46,12 +54,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      if (inputsAreFull(currentRow)) {
-        checkWordBtn.disabled = false;
-      }
-
-      if (!inputsAreFull(currentRow)) {
-        checkWordBtn.disabled = true;
+      // Only update button state if this is the current active row
+      if (inputRow === inputRows[currentRow]) {
+        checkWordBtn.disabled = !inputsAreFull(inputRow);
       }
     });
 
@@ -103,15 +108,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      if (event.key === "Enter" && input.value && currentIndex < rowInputs.length - 1) {
-        event.preventDefault();
-
-        for (let i = currentIndex + 1; i < rowInputs.length; ++i) {
-          if (!rowInputs[i].disabled) {
-            rowInputs[i].focus();
-            break;
+      // Enter key: move to next input if not last, otherwise let global handler submit
+      if (event.key === "Enter" && input.value) {
+        if (currentIndex < rowInputs.length - 1) {
+          event.preventDefault();
+          for (let i = currentIndex + 1; i < rowInputs.length; ++i) {
+            if (!rowInputs[i].disabled) {
+              rowInputs[i].focus();
+              break;
+            }
           }
         }
+        // If on last input and row is full, let the global handler submit
       }
     });
   });
@@ -151,6 +159,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         input.classList.add("game__input-letter--wrong");
       }
     });
+    
+    return rowCorrectCount;
   }
 
   function disableRow(row) {
@@ -175,12 +185,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (rowCorrectCount === 6) {
       document.querySelector(".message").innerHTML = `<p>You Won! The word was ${correctAnswer.toLowerCase()}</p>`;
+      checkWordBtn.disabled = true;
+      return false; // Game won, don't continue
     }
     else if (rowNumber === 5) {
       document.querySelector(".message").innerHTML = `<p>You Lost! The word was ${correctAnswer.toLowerCase()}</p>`;
+      checkWordBtn.disabled = true;
+      return false; // Game lost, don't continue
     }
     else {
       enableRow(inputRows[rowNumber + 1]);
+      checkWordBtn.disabled = true; // Disable button for new empty row
 
       const currentInputs = inputRows[rowNumber + 1].querySelectorAll(".game__input-letter");
       const answerArray = correctAnswer.split("");
@@ -200,24 +215,31 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
         }
       }
+      return true; // Continue to next row
     }
   }
 
   checkWordBtn.addEventListener("click", _ => {
-    transitionToNextStage(currentRow, correctAnswer);
-    ++currentRow;
+    if (transitionToNextStage(currentRow, correctAnswer)) {
+      ++currentRow;
+    }
   });
 
   restartBtn.addEventListener("click", _ => {
     location.reload();
   });
 
+  hintBtn.addEventListener("click", _ => {
+    window.alert("Coming Soon!");
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       if (inputsAreFull(inputRows[currentRow])) {
         event.preventDefault();
-        transitionToNextStage(currentRow, correctAnswer);
-        ++currentRow;
+        if (transitionToNextStage(currentRow, correctAnswer)) {
+          ++currentRow;
+        }
       }
     }
   });
