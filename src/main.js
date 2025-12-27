@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const currentIndex = rowInputs.indexOf(input);
 
     input.addEventListener('input', event => {
+      if (event.target.value) event.preventDefault();
+
       if (!event.target.value) {
         event.target.value = event.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
       }
