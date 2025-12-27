@@ -21,5 +21,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     const currentInputs = Array.from(row.querySelectorAll(".game__input-letter"));
     return currentInputs.every(input => input.value);
   }
+
+  allInputs.forEach((input, index) => {
+    const currentRow = input.closest('.game__inputs');
+
+    input.addEventListener('input', event => {
+      event.target.value = event.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+
+      const nextInput = allInputs[index + 1];
+
+      if (event.target.value && index < allInputs.length - 1) {
+        if (!nextInput.disabled) nextInput.focus();
+      }
+
+      if (inputsAreFull(currentRow)) {
+        checkWordBtn.disabled = false;
+      }
+
+      if (!inputsAreFull(currentRow)) {
+        checkWordBtn.disabled = true;
+      }
+    });
+
+    input.addEventListener('keydown', event => {
+      const rowInputs = Array.from(currentRow.querySelectorAll('.game__input-letter'));
+      const currentIndex = rowInputs.indexOf(input);
+      const rowIndex = Array.from(inputRows).indexOf(currentRow);
+
+      if (event.key === "ArrowLeft" && currentIndex > 0) {
+        event.preventDefault();
+        rowInputs[currentIndex - 1].focus();
+      }
+
+      if (event.key === "ArrowRight" && currentIndex < rowInputs.length - 1) {
+        event.preventDefault();
+        rowInputs[currentIndex + 1].focus();
+      }
+
+      if (event.key === "Backspace" && !input.value && currentIndex > 0) {
+        event.preventDefault();
+        rowInputs[currentIndex - 1].focus();
+      }
+    });
+  });
+
   
 });
