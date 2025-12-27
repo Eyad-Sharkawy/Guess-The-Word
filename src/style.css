@@ -1,0 +1,296 @@
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh; /* Fallback for Firefox */
+    min-height: 100dvh; /* Modern browsers */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* 1. Base styles (applies to all sizes) */
+.container {
+    width: 100%;
+    flex: 1;
+    padding-right: 0.75rem; /* Or use var(--bs-gutter-x, 0.75rem) */
+    padding-left: 0.75rem; /* Or use var(--bs-gutter-x, 0.75rem) */
+    margin-right: auto; /* Centers the container horizontally */
+    margin-left: auto; /* Centers the container horizontally */
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    min-height: 0;
+}
+
+/* 2. Responsive Breakpoints */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+.main-header {
+    padding: 1rem;
+    background-color: white;
+}
+
+h1 {
+    text-transform: capitalize;
+    text-align: center;
+    margin: 0;
+}
+
+main {
+    background-color: #EEEEEE;
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    padding-top: 2rem;
+}
+
+@media (max-width: 992px) {
+    .container {
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+        gap: 2rem;
+        align-items: center;
+    }
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.game__rows {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: fit-content;
+}
+
+.game__row {
+    display: flex;
+}
+
+.game__inputs {
+    display: flex;
+    gap: 1rem;
+    flex: 0 0 auto;
+    width: fit-content;
+}
+
+.game__input-letter {
+    flex: 0 0 60px;
+    width: 60px;
+    max-width: 60px;
+    height: 60px;
+    min-width: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+    border: none;
+    background-color: white;
+    border-bottom: 3px solid #333333;
+    text-transform: uppercase;
+}
+
+.game__input-letter:disabled {
+    border-bottom: 3px solid #909090;
+    background-color: #F6F6F6;
+}
+
+.game__input-letter--inplace {
+    background-color: #83D4BB;
+}
+
+.game__input-letter--correct {
+    background-color: #F3C680;
+}
+
+.game__input-letter--wrong {
+    background-color: #f56b61;
+}
+
+.game__btns {
+    display: flex;
+    /*justify-content: space-between;*/
+    gap: 0.5rem;
+}
+
+.game__btn {
+    border: none;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.game__btn--check-word {
+    flex: 3;
+    background-color: #27303F;
+}
+
+.game__btn--check-word:disabled {
+    background-color: #3f3f40;
+    color: #909090;
+    cursor: not-allowed;
+}
+
+.game__btn--hint {
+    flex: 2;
+    background-color: #18BA89;
+}
+
+.game__btn--hint:disabled {
+    background-color: #65baa0;
+    color: #909090;
+    cursor: not-allowed;
+}
+
+.game__btn--restart {
+    flex: 1;
+    background-color: #F44336;
+}
+
+@media (max-width: 576px) {
+    .game__input {
+        flex: 0 0 50px;
+        height: 50px;
+        max-width: 50px;
+    }
+
+    .game__btn {
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .game__input {
+        flex: 0 0 40px;
+        height: 40px;
+        max-width: 40px;
+    }
+
+    .game__btn {
+        padding: 0.25rem 1.25rem;
+    }
+}
+
+@media (max-width: 330px) {
+    .game__input {
+        flex: 0 0 30px;
+        height: 30px;
+        max-width: 30px;
+    }
+
+    .game__btn {
+        font-size: 1rem;
+        padding: 0.15rem 0.5rem;
+    }
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+.legend__items {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.legend__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.legend__indicator {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: block;
+}
+
+.legend__label {
+    font-weight: bold;
+}
+
+.legend__indicator--green {
+    background-color: #18BA89;
+}
+
+.legend__indicator--yellow {
+    background-color: #F89E13;
+}
+
+.legend__indicator--red {
+    background-color: #F44336;
+}
