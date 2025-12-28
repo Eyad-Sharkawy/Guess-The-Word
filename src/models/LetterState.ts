@@ -5,4 +5,6 @@ const LetterState = {
     EMPTY: 'empty'
 } as const;
 
+export type LetterStateType = typeof LetterState[keyof typeof LetterState];
+
 export default LetterState;

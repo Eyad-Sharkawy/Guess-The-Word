@@ -1,3 +1,5 @@
+import { CSS_CLASSES } from '../constants/CssClasses';
+
 class GameView {
     private readonly inputRows: NodeListOf<HTMLElement>;
     private readonly checkWordBtn: HTMLButtonElement;
@@ -41,7 +43,7 @@ class GameView {
         this.messageElement = messageEl;
     }
 
-    getRowInputs(rowIndex: number) {
+    getRowInputs(rowIndex: number): HTMLInputElement[] {
         if (rowIndex < 0 || rowIndex >= this.inputRows.length) {
             throw new Error(`Invalid row index ${rowIndex}`);
         }
@@ -49,12 +51,12 @@ class GameView {
         return Array.from(row.querySelectorAll<HTMLInputElement>(`.game__input-letter`));
     }
 
-    getRowValues(rowIndex: number) {
+    getRowValues(rowIndex: number): string[] {
         const inputs = this.getRowInputs(rowIndex);
         return inputs.map(input => input.value.toUpperCase());
     }
 
-    disableRow(rowIndex: number) {
+    disableRow(rowIndex: number): void {
         const inputs = this.getRowInputs(rowIndex);
 
         inputs.forEach(input => {
@@ -62,14 +64,14 @@ class GameView {
         });
     }
 
-    enableRow(rowIndex: number) {
+    enableRow(rowIndex: number): void {
         const inputs = this.getRowInputs(rowIndex);
         inputs.forEach(input => {
             input.disabled = false;
         });
     }
 
-    setInputValue(rowIndex: number, inputIndex: number, value: string) {
+    setInputValue(rowIndex: number, inputIndex: number, value: string): void {
         const inputs = this.getRowInputs(rowIndex);
 
         if (inputIndex < 0 || inputIndex >= inputs.length) {
@@ -78,7 +80,7 @@ class GameView {
         inputs[inputIndex].value = value;
     }
 
-    addInputClass(rowIndex: number, inputIndex: number, className: string) {
+    addInputClass(rowIndex: number, inputIndex: number, className: string): void {
         const inputs = this.getRowInputs(rowIndex);
 
         if (inputIndex < 0 || inputIndex >= inputs.length) {
@@ -87,7 +89,7 @@ class GameView {
         inputs[inputIndex].classList.add(className);
     }
 
-    removeInputClass(rowIndex: number, inputIndex: number, className: string) {
+    removeInputClass(rowIndex: number, inputIndex: number, className: string): void {
         const inputs = this.getRowInputs(rowIndex);
 
         if (inputIndex < 0 || inputIndex >= inputs.length) {
@@ -96,7 +98,7 @@ class GameView {
         inputs[inputIndex].classList.remove(className);
     }
 
-    focusInput(rowIndex: number, inputIndex: number) {
+    focusInput(rowIndex: number, inputIndex: number): void {
         const inputs = this.getRowInputs(rowIndex);
 
         if (inputIndex < 0 || inputIndex >= inputs.length) {
@@ -105,7 +107,7 @@ class GameView {
         inputs[inputIndex].focus();
     }
 
-    focusFirstEnabledInput(rowIndex: number) {
+    focusFirstEnabledInput(rowIndex: number): void {
         const inputs = this.getRowInputs(rowIndex);
 
         for (let i = 0; i < inputs.length; ++i) {
@@ -116,44 +118,47 @@ class GameView {
         }
     }
 
-    updateMessage(text: string) {
-        this.messageElement.innerHTML = `<p>${text}</p>`;
+    updateMessage(text: string): void {
+        const p = document.createElement('p');
+        p.textContent = text;
+        this.messageElement.innerHTML = '';
+        this.messageElement.appendChild(p);
     }
 
-    clearMessage() {
+    clearMessage(): void {
         this.messageElement.innerHTML = ``;
     }
 
-    setCheckButtonEnabled(enabled: boolean) {
+    setCheckButtonEnabled(enabled: boolean): void {
         this.checkWordBtn.disabled = !enabled;
     }
 
-    setHintButtonEnabled(enabled: boolean) {
+    setHintButtonEnabled(enabled: boolean): void {
         this.hintBtn.disabled = !enabled;
     }
 
-    getCheckWordButton() {
+    getCheckWordButton(): HTMLButtonElement {
         return this.checkWordBtn;
     }
 
-    getRestartButton() {
+    getRestartButton(): HTMLButtonElement {
         return this.restartBtn;
     }
 
-    getHintButton() {
+    getHintButton(): HTMLButtonElement {
         return this.hintBtn;
     }
 
-    reset() {
+    reset(): void {
         for (let rowIndex = 0; rowIndex < this.getRowCount(); ++rowIndex) {
             const inputs = this.getRowInputs(rowIndex);
             inputs.forEach((input) => {
                input.value = '';
                input.disabled = rowIndex !== 0;
                input.classList.remove(
-                   `game__input-letter--inplace`,
-                   `game__input-letter--correct`,
-                   `game__input-letter--wrong`
+                   CSS_CLASSES.INPUT_IN_PLACE,
+                   CSS_CLASSES.INPUT_CORRECT,
+                   CSS_CLASSES.INPUT_WRONG
                );
             });
         }
@@ -166,7 +171,7 @@ class GameView {
         this.setHintButtonEnabled(true);
     }
 
-    getRowCount() {
+    getRowCount(): number {
         return this.inputRows.length;
     }
 }

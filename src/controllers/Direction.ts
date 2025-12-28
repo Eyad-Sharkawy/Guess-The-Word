@@ -1,6 +1,6 @@
-const Direction = {
-    FORWARD: 'forward',
-    BACKWARD: 'backward'
-} as const;
+enum Direction {
+    FORWARD = 'forward',
+    BACKWARD = 'backward'
+}
 
 export default Direction;

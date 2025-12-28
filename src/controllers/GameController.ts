@@ -2,25 +2,34 @@ import GameModel from "../models/GameModel.ts";
 import GameView from "../views/GameView.ts";
 import InputView from "../views/InputView.ts";
 import Direction from "./Direction.ts";
+import { CSS_CLASSES, HINT_MESSAGE_TIMEOUT } from "../constants/CssClasses.ts";
 
 class GameController {
     private readonly model: GameModel;
     private readonly view: GameView;
     private inputViews: InputView[][] = [];
+    private enterKeyHandler: ((event: KeyboardEvent) => void) | null = null;
+    private checkWordHandler: (() => void) | null = null;
+    private restartHandler: (() => void) | null = null;
+    private hintHandler: (() => void) | null = null;
+    private hintTimeoutId: number | null = null;
+    private readonly isDevelopment: boolean = import.meta.env.DEV;
 
     constructor(model: GameModel, view: GameView) {
         this.model = model;
         this.view = view;
     }
 
-    async init() {
+    async init(): Promise<void> {
         try {
             const answer = await this.model.fetchAnswer();
             this.model.setAnswer(answer);
-            console.log(`Answer: ${answer}`);
+            if (this.isDevelopment) {
+                console.log(`Answer: ${answer}`);
+            }
         }
         catch (error) {
-            console.error(`Failed to fetch word`, error)
+            console.error(`Failed to fetch word`, error);
             this.model.setAnswer("WORDLE");
         }
 
@@ -31,11 +40,11 @@ class GameController {
         this.start();
     }
 
-    start() {
+    start(): void {
         this.view.enableRow(0);
     }
 
-    private initializeInputViews() {
+    private initializeInputViews(): void {
         const rowCount = this.view.getRowCount();
         this.inputViews = [];
 
@@ -48,6 +57,7 @@ class GameController {
                 inputView.attachEventListeners(
                     this.handleInputChange.bind(this),
                     this.handleKeydown.bind(this),
+                    this.handlePaste.bind(this),
                 );
                 rowInputViews.push(inputView);
             });
@@ -56,34 +66,72 @@ class GameController {
         }
     }
 
-    private setupEventListeners() {
-        this.view.getCheckWordButton().addEventListener('click', () => {
+    private setupEventListeners(): void {
+        this.checkWordHandler = () => {
             this.handleCheckWord();
-        });
+        };
+        this.view.getCheckWordButton().addEventListener('click', this.checkWordHandler);
 
-        this.view.getRestartButton().addEventListener('click', () => {
+        this.restartHandler = () => {
             this.handleRestart();
-        });
+        };
+        this.view.getRestartButton().addEventListener('click', this.restartHandler);
 
-        this.view.getHintButton().addEventListener('click', () => {
+        this.hintHandler = () => {
             this.handleHint();
-        });
+        };
+        this.view.getHintButton().addEventListener('click', this.hintHandler);
 
-        document.addEventListener('keydown', (event: KeyboardEvent) => {
+        this.enterKeyHandler = (event: KeyboardEvent) => {
+            if (event.target instanceof HTMLInputElement) {
+                return;
+            }
+            
             if (event.key === 'Enter') {
                 this.handleEnterKey();
             }
-        });
+        };
+        
+        document.addEventListener('keydown', this.enterKeyHandler);
     }
 
-    private handleInputChange(rowIndex: number, inputIndex: number, value: string) {
+    private cleanupEventListeners(): void {
+        if (this.enterKeyHandler) {
+            document.removeEventListener('keydown', this.enterKeyHandler);
+            this.enterKeyHandler = null;
+        }
+        
+        if (this.checkWordHandler) {
+            this.view.getCheckWordButton().removeEventListener('click', this.checkWordHandler);
+            this.checkWordHandler = null;
+        }
+        
+        if (this.restartHandler) {
+            this.view.getRestartButton().removeEventListener('click', this.restartHandler);
+            this.restartHandler = null;
+        }
+        
+        if (this.hintHandler) {
+            this.view.getHintButton().removeEventListener('click', this.hintHandler);
+            this.hintHandler = null;
+        }
+        
+        if (this.hintTimeoutId) {
+            clearTimeout(this.hintTimeoutId);
+            this.hintTimeoutId = null;
+        }
+    }
+
+    private handleInputChange(rowIndex: number, inputIndex: number, value: string): void {
         const currentRow = this.model.getCurrentRow();
 
         if (rowIndex !== currentRow) return;
 
-
         if (value && inputIndex < this.inputViews[rowIndex].length - 1) {
-            this.moveToNextInput(rowIndex, inputIndex, Direction.FORWARD);
+            const nextInput = this.inputViews[rowIndex][inputIndex + 1];
+            if (!nextInput || !nextInput.getValue()) {
+                this.moveToNextInput(rowIndex, inputIndex, Direction.FORWARD);
+            }
         }
 
         const rowValues = this.view.getRowValues(currentRow);
@@ -91,7 +139,38 @@ class GameController {
         this.view.setCheckButtonEnabled(isFull);
     }
 
-    private handleKeydown(rowIndex: number, inputIndex: number, event: KeyboardEvent) {
+    private handlePaste(rowIndex: number, startIndex: number, letters: string[]): void {
+        const currentRow = this.model.getCurrentRow();
+        
+        if (rowIndex !== currentRow) return;
+        
+        const wordLength = this.model.getWordLength();
+        const maxIndex = Math.min(startIndex + letters.length, wordLength);
+        
+        for (let i = 0; i < letters.length && (startIndex + i) < wordLength; i++) {
+            const inputIndex = startIndex + i;
+            const letter = letters[i];
+            
+            if (letter) {
+                this.view.setInputValue(rowIndex, inputIndex, letter);
+                const input = this.inputViews[rowIndex][inputIndex].getInputElement();
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+        
+        const nextIndex = Math.min(maxIndex, wordLength - 1);
+        if (nextIndex < wordLength) {
+            requestAnimationFrame(() => {
+                this.view.focusInput(rowIndex, nextIndex);
+            });
+        }
+        
+        const rowValues = this.view.getRowValues(currentRow);
+        const isFull = this.model.isRowFull(rowValues);
+        this.view.setCheckButtonEnabled(isFull);
+    }
+
+    private handleKeydown(rowIndex: number, inputIndex: number, event: KeyboardEvent): void {
         const currentRow = this.model.getCurrentRow();
 
         if (rowIndex !== currentRow) return;
@@ -121,9 +200,16 @@ class GameController {
         }
 
         if (event.key === 'Enter') {
+            event.preventDefault();
+            const rowValues = this.view.getRowValues(currentRow);
+            
+            if (this.model.isRowFull(rowValues)) {
+                this.handleCheckWord();
+                return;
+            }
+            
             const currentValue = this.inputViews[rowIndex][inputIndex].getValue();
             if (currentValue && inputIndex < this.inputViews[rowIndex].length - 1) {
-                event.preventDefault();
                 this.moveToNextInput(rowIndex, inputIndex, Direction.FORWARD);
             }
         }
@@ -147,25 +233,44 @@ class GameController {
             return;
         }
 
-        const results = this.model.checkRow(guess);
+        try {
+            const { results } = this.model.checkRow(guess);
 
-        results.forEach((result, index) => {
-            const className = `game__input-letter--${result.state}`;
-            this.view.addInputClass(currentRow, index, className);
-        });
+            results.forEach((result, index) => {
+                let className: string;
+                switch (result.state) {
+                    case 'inplace':
+                        className = CSS_CLASSES.INPUT_IN_PLACE;
+                        break;
+                    case 'correct':
+                        className = CSS_CLASSES.INPUT_CORRECT;
+                        break;
+                    case 'wrong':
+                        className = CSS_CLASSES.INPUT_WRONG;
+                        break;
+                    default:
+                        className = CSS_CLASSES.INPUT_WRONG;
+                }
+                this.view.addInputClass(currentRow, index, className);
+            });
+        } catch (error) {
+            console.error('Error checking word:', error);
+            this.view.updateMessage('Error: Invalid guess. Please try again.');
+            return;
+        }
 
         this.view.disableRow(currentRow);
 
         if (this.model.isGameWon(guess)) {
             const answer = this.model.getCorrectAnswer();
-            this.view.updateMessage(`You Won! The word was ${answer.toLowerCase()}`);
+            this.view.updateMessage(`You Won! The word was ${answer.toUpperCase()}`);
             this.view.setCheckButtonEnabled(false);
             return;
         }
 
         if (this.model.isGameLost()) {
             const answer = this.model.getCorrectAnswer();
-            this.view.updateMessage(`You Lost! The word was ${answer.toLowerCase()}`);
+            this.view.updateMessage(`You Lost! The word was ${answer.toUpperCase()}`);
             this.view.setCheckButtonEnabled(false);
             return;
         }
@@ -191,31 +296,68 @@ class GameController {
     }
 
     private updateCorrectIndicesInNextRow(nextRow: number): void {
+        const maxRows = this.model.getMaxRows();
+        if (nextRow < 0 || nextRow >= maxRows) {
+            if (this.isDevelopment) {
+                console.warn(`Invalid nextRow index: ${nextRow}`);
+            }
+            return;
+        }
+        
         const correctIndices = this.model.getCorrectIndices();
         const answer = this.model.getCorrectAnswer();
         const answerArray = answer.split('');
+        const wordLength = this.model.getWordLength();
 
         correctIndices.forEach((index) => {
+            if (index < 0 || index >= wordLength || index >= answerArray.length) {
+                if (this.isDevelopment) {
+                    console.warn(`Invalid index in correctIndices: ${index}`);
+                }
+                return;
+            }
+            
             this.view.setInputValue(nextRow, index, answerArray[index]);
 
-            this.view.addInputClass(nextRow, index, 'game__input-letter--inplace');
+            this.view.addInputClass(nextRow, index, CSS_CLASSES.INPUT_IN_PLACE);
 
             const inputs = this.view.getRowInputs(nextRow);
-            inputs[index].disabled = true;
+            if (index < inputs.length) {
+                inputs[index].disabled = true;
+            }
         });
     }
 
     private moveToNextInput(
         rowIndex: number,
         currentIndex: number,
-        direction: typeof Direction[keyof typeof Direction]
+        direction: Direction
     ): void {
+        if (rowIndex < 0 || rowIndex >= this.inputViews.length) {
+            if (this.isDevelopment) {
+                console.warn(`Invalid row index: ${rowIndex}`);
+            }
+            return;
+        }
+        
         const inputs = this.inputViews[rowIndex];
+        
+        if (!inputs || inputs.length === 0) {
+            if (this.isDevelopment) {
+                console.warn(`No inputs found for row: ${rowIndex}`);
+            }
+            return;
+        }
+        
         const startIndex = direction === Direction.FORWARD ? currentIndex + 1 : currentIndex - 1;
         const endIndex = direction === Direction.FORWARD ? inputs.length : -1;
         const step = direction === Direction.FORWARD ? 1 : -1;
 
         for (let i = startIndex; i !== endIndex; i += step) {
+            if (i < 0 || i >= inputs.length) {
+                continue;
+            }
+            
             if (!inputs[i].isDisabled()) {
                 inputs[i].focus();
                 break;
@@ -223,16 +365,27 @@ class GameController {
         }
     }
 
-    private handleRestart(): void {
+    private async handleRestart(): Promise<void> {
+        this.cleanupEventListeners();
+        
         this.model.reset();
 
         this.view.reset();
 
-        this.init();
+        await this.init();
     }
 
     private handleHint(): void {
-        window.alert('Coming Soon!');
+        if (this.hintTimeoutId) {
+            clearTimeout(this.hintTimeoutId);
+        }
+        
+        this.view.updateMessage('Hint feature coming soon!');
+        
+        this.hintTimeoutId = window.setTimeout(() => {
+            this.view.clearMessage();
+            this.hintTimeoutId = null;
+        }, HINT_MESSAGE_TIMEOUT);
     }
 }
 

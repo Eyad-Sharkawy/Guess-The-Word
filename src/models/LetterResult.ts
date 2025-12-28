@@ -1,29 +1,29 @@
-import LetterState from "./LetterState.ts";
+import LetterState, { type LetterStateType } from "./LetterState.ts";
 
 class LetterResult {
     public readonly letter: string;
     public readonly position: number;
-    public readonly state: typeof LetterState[keyof typeof LetterState];
+    public readonly state: LetterStateType;
 
-    constructor(letter: string, position: number, state: typeof LetterState[keyof typeof LetterState]) {
+    constructor(letter: string, position: number, state: LetterStateType) {
         this.letter = letter;
         this.position = position;
         this.state = state;
     }
 
-    public isInPlace() {
+    public isInPlace(): boolean {
         return this.state === LetterState.IN_PLACE;
     }
 
-    public isCorrect() {
+    public isCorrect(): boolean {
         return this.state === LetterState.CORRECT;
     }
 
-    public isWrong() {
+    public isWrong(): boolean {
         return this.state === LetterState.WRONG;
     }
 
-    public isEmpty() {
+    public isEmpty(): boolean {
         return this.state === LetterState.EMPTY;
     }
 }
