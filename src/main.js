@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const usedIndices = new Set();
     let rowCorrectCount = 0;
 
+    // First pass: mark exact matches (green/inplace)
     currentInputs.forEach((input, index) => {
       if (input.value.toUpperCase() === answerArray[index]) {
         input.classList.add("game__input-letter--inplace");
@@ -140,16 +141,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
+    // Second pass: mark correct but wrong position (yellow) or wrong (red)
     currentInputs.forEach((input, index) => {
-      if (usedIndices.has(index)) {
+      // Skip if already marked as inplace
+      if (input.classList.contains("game__input-letter--inplace")) {
         return;
       }
 
       const letter = input.value.toUpperCase();
       if (!letter) {
+        // Mark empty inputs as wrong
+        input.classList.add("game__input-letter--wrong");
         return;
       }
 
+      // Find if this letter exists in answer at a position not yet used
       const foundIndex = answerArray.findIndex((char, i) => !usedIndices.has(i) && char === letter);
 
       if (foundIndex !== -1) {
