@@ -1,13 +1,141 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>guess-the-word</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+</head>
+
+<body>
+<header class="main-header">
+    <h1>Guess the word</h1>
+</header>
+
+<main>
+    <div class="container">
+        <div class="game">
+            <ul class="game__rows">
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off">
+                </li>
+
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                </li>
+
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                </li>
+
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                </li>
+
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                </li>
+
+                <li class="game__inputs">
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                    <input type="text" name="letter" class="game__input-letter" maxlength="1" autocomplete="off"
+                           disabled>
+                </li>
+            </ul>
+
+            <div class="game__btns">
+                <button class="game__btn game__btn--check-word" disabled>Check Word</button>
+                <button class="game__btn game__btn--hint">Hint</button>
+                <button class="game__btn game__btn--restart">Restart</button>
+            </div>
+        </div>
+
+        <div class="legend">
+            <header>
+                <h2>Legend</h2>
+            </header>
+            <div class="legend__items">
+                <div class="legend__item legend__item--one">
+                    <span class="legend__indicator legend__indicator--green"></span>
+                    <p class="legend__label">
+                        Letter is correct and in place
+                    </p>
+                </div>
+                <div class="legend__item legend__item--two">
+                    <span class="legend__indicator legend__indicator--yellow"></span>
+                    <p class="legend__label">
+                        Letter is correct but isn't in place
+                    </p>
+                </div>
+                <div class="legend__item legend__item--three">
+                    <span class="legend__indicator legend__indicator--red"></span>
+                    <p class="legend__label">
+                        Letter isn't correct
+                    </p>
+                </div>
+            </div>
+            <div class="message"></div>
+        </div>
+    </div>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
 </html>
