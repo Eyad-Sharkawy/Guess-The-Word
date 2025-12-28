@@ -127,9 +127,9 @@ class GameController {
 
         if (rowIndex !== currentRow) return;
 
-        if (value && inputIndex < this.inputViews[rowIndex].length - 1) {
-            const nextInput = this.inputViews[rowIndex][inputIndex + 1];
-            if (!nextInput || !nextInput.getValue()) {
+        if (value) {
+            const wordLength = this.model.getWordLength();
+            if (inputIndex < wordLength - 1) {
                 this.moveToNextInput(rowIndex, inputIndex, Direction.FORWARD);
             }
         }

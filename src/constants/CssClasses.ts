@@ -7,4 +7,3 @@ export const CSS_CLASSES = {
 export type CssClassType = typeof CSS_CLASSES[keyof typeof CSS_CLASSES];
 
 export const HINT_MESSAGE_TIMEOUT = 3000;
-
