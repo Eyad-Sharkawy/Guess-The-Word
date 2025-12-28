@@ -1,7 +1,7 @@
 import GameModel from "../models/GameModel.ts";
 import GameView from "../views/GameView.ts";
 import InputView from "../views/InputView.ts";
-import Direction from "./Direction.ts";
+import Direction, { type DirectionType } from "./Direction.ts";
 import { CSS_CLASSES, HINT_MESSAGE_TIMEOUT } from "../constants/CssClasses.ts";
 
 class GameController {
@@ -331,7 +331,7 @@ class GameController {
     private moveToNextInput(
         rowIndex: number,
         currentIndex: number,
-        direction: Direction
+        direction: DirectionType
     ): void {
         if (rowIndex < 0 || rowIndex >= this.inputViews.length) {
             if (this.isDevelopment) {
