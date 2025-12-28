@@ -9,10 +9,9 @@ class InputView {
         this.inputIndex = inputIndex;
     }
 
-    attatchEventListeners(
+    attachEventListeners(
         onInput: (rowIndex: number, inputIndex: number, value: string) => void,
-        onKeydown: (rowIndex: number, inputIndex: number, value: KeyboardEvent) => void,
-        onPaste: (rowIndex: number, inputIndex: number, event: ClipboardEvent) => void
+        onKeydown: (rowIndex: number, inputIndex: number, value: KeyboardEvent) => void
     ) {
         this.input.addEventListener('input', (event) => {
             const target = event.target as HTMLInputElement;
@@ -39,8 +38,6 @@ class InputView {
                 this.input.value = firstLetter;
                 this.input.dispatchEvent(new Event('input', {bubbles: true}));
             }
-            onPaste(this.rowIndex, this.inputIndex, event);
-
         });
     }
 

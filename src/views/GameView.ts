@@ -8,7 +8,7 @@ class GameView {
     constructor() {
         this.inputRows = document.querySelectorAll<HTMLElement>('.game__inputs');
 
-        if (this.inputRows.length) {
+        if (!this.inputRows.length) {
             throw new Error('Game input rows not found');
         }
 
@@ -19,17 +19,17 @@ class GameView {
         }
         this.checkWordBtn = checkBtn;
 
-        const restartBtn = document.querySelector<HTMLButtonElement>(`.game__btn--check-word`);
+        const restartBtn = document.querySelector<HTMLButtonElement>(`.game__btn--restart`);
 
         if (!restartBtn) {
             throw new Error(`Restart button not found`);
         }
         this.restartBtn = restartBtn;
 
-        const hintBtn = document.querySelector<HTMLButtonElement>(`.game__btn--check-word`);
+        const hintBtn = document.querySelector<HTMLButtonElement>(`.game__btn--hint`);
 
         if (!hintBtn) {
-            throw new Error(`Check word button not found`);
+            throw new Error(`Hint button not found`);
         }
         this.hintBtn = hintBtn;
 
@@ -105,7 +105,7 @@ class GameView {
         inputs[inputIndex].focus();
     }
 
-    focusFirstEnablesInput(rowIndex: number) {
+    focusFirstEnabledInput(rowIndex: number) {
         const inputs = this.getRowInputs(rowIndex);
 
         for (let i = 0; i < inputs.length; ++i) {
@@ -159,8 +159,6 @@ class GameView {
         }
 
         this.enableRow(0);
-
-        this.clearMessage();
 
         this.clearMessage();
 

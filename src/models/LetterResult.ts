@@ -1,6 +1,6 @@
 import LetterState from "./LetterState.ts";
 
-class GameModel {
+class LetterResult {
     public readonly letter: string;
     public readonly position: number;
     public readonly state: typeof LetterState[keyof typeof LetterState];
@@ -28,4 +28,4 @@ class GameModel {
     }
 }
 
-export default GameModel;
+export default LetterResult;
