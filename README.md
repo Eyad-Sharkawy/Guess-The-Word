@@ -27,7 +27,7 @@ A Wordle-inspired word guessing game built with TypeScript, following the MVC (M
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Eyad-Sharkawy/Guess-The-Word
 cd guess-the-word
 ```
 
