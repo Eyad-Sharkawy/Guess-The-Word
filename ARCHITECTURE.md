@@ -8,17 +8,17 @@ This project follows the **Model-View-Controller (MVC)** architectural pattern, 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         User Interface                       │
-│                    (HTML + CSS + Events)                     │
+│                         User Interface                      │
+│                    (HTML + CSS + Events)                    │
 └───────────────────────────┬─────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      GameController                          │
+│                      GameController                         │
 │  • Handles user interactions                                │
-│  • Coordinates Model and View                                │
+│  • Coordinates Model and View                               │
 │  • Manages game flow and state transitions                  │
-│  • Processes input validation                                │
+│  • Processes input validation                               │
 └───────────────┬───────────────────────────────┬─────────────┘
                 │                               │
                 ▼                               ▼
@@ -27,7 +27,7 @@ This project follows the **Model-View-Controller (MVC)** architectural pattern, 
     │  • Game state         │      │  • DOM manipulation   │
     │  • Business logic     │      │  • UI updates         │
     │  • Word fetching      │      │  • Event binding      │
-    │  • Guess validation    │      │                       │
+    │  • Guess validation   │      │                       │
     └───────────────────────┘      └───────────────────────┘
                 │                               │
                 └───────────────┬───────────────┘
@@ -62,6 +62,8 @@ This project follows the **Model-View-Controller (MVC)** architectural pattern, 
   - Evaluate letter states (inplace, correct, wrong)
   - Track correctly positioned letters
   - Determine win/loss conditions
+  - Generate hints (select random unrevealed letters)
+  - Track hint usage count
 
 ### GameView
 - **Purpose**: Manages the main game UI
@@ -108,19 +110,32 @@ This project follows the **Model-View-Controller (MVC)** architectural pattern, 
 8. If game continues, Controller transitions to next row
 9. Controller auto-fills correct letters in next row
 
+### Hint Flow
+1. User clicks "Hint" button
+2. Controller calls `handleHint()`
+3. Controller calls `model.getHintIndex()` to get a random unrevealed letter index
+4. If no unrevealed letters exist, show message and return
+5. Controller gets the letter at that index via `model.getLetterAtIndex()`
+6. Controller calls `view.revealHint()` to display the letter
+7. Controller marks the index as correct via `model.addCorrectIndex()`
+8. Controller increments hint count via `model.incrementHint()`
+9. Controller checks if row is now full and enables "Check Word" button if needed
+10. Controller displays hint message and disables hint button after 3 uses
+
 ## State Management
 
 ### GameModel State
 - `correctAnswer`: The word to guess (string)
 - `currentRow`: Current attempt index (0-5)
 - `correctIndices`: Set of indices with correctly positioned letters
+- `hintCount`: Number of hints used (0-3)
 - `maxRows`: Maximum number of attempts (6)
 - `wordLength`: Required word length (6)
 
 ### GameController State
 - `inputViews`: 2D array of InputView instances
 - Event handler references (for cleanup)
-- Hint timeout ID
+- Hint timeout ID (for message display)
 
 ## Letter Evaluation Algorithm
 
@@ -159,5 +174,5 @@ The architecture supports easy extension:
 - **Different Word Lengths**: Modify `wordLength` and `maxRows` in Model
 - **Custom APIs**: Replace `fetchAnswer()` implementation
 - **Additional Views**: Create new View classes following same pattern
-- **Hint System**: Implement in Model, expose through Controller
+- **Hint System**: Fully implemented - reveals random unrevealed letters (max 3 per game)
 

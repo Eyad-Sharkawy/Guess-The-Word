@@ -294,3 +294,8 @@ h2 {
 .legend__indicator--red {
     background-color: #F44336;
 }
+
+.game__input-letter--hint {
+    background-color: #e0e0e0;
+    border: 2px dashed #999;
+}

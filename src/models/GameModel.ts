@@ -19,6 +19,7 @@ class GameModel {
     private readonly apiUrl = 'https://random-word-api.herokuapp.com/word';
     private readonly apiTimeout = 5000;
     private readonly apiRetries = 3;
+    private hintCount = 0;
 
     /**
      * Gets the correct answer word
@@ -231,6 +232,7 @@ class GameModel {
         this.correctAnswer = '';
         this.currentRow = 0;
         this.correctIndices.clear();
+        this.hintCount = 0;
     }
 
     /**
@@ -275,6 +277,56 @@ class GameModel {
      */
     isPositionCorrect(index: number): boolean {
         return this.correctIndices.has(index);
+    }
+
+    getHintCount() {
+        return this.hintCount;
+    }
+
+    incrementHint() {
+        ++this.hintCount;
+    }
+
+    /**
+     * Generates a hint by revealing a random letter that hasn't been reveled yet
+     * @return the index of the letter to reveal, or -1 if all letter are already revealed
+     */
+    getHintIndex(): number {
+        const arrayAnswer = this.correctAnswer.split('');
+        const availableIndices: number[] = [];
+
+        for (let i = 0; i < arrayAnswer.length; ++i) {
+            if (!this.correctIndices.has(i)) {
+                availableIndices.push(i);
+            }
+        }
+
+        if (availableIndices.length === 0) {
+            return -1;
+        }
+
+        const randomIndex = Math.floor(Math.random() * availableIndices.length);
+        return availableIndices[randomIndex];
+    }
+
+    /**
+     * Gets the letter at a specific index
+     * @param index - The index to get the letter from
+     * @return The letter at that position, or empty string if invalid
+     */
+    getLetterAtIndex(index: number): string {
+        if (index < 0 || index >= this.correctAnswer.length) {
+            return '';
+        }
+        return this.correctAnswer.charAt(index);
+    }
+
+    /**
+     * Adds an index to the set of correctly positioned letters
+     * @param index - The index to mark as correct
+     */
+    addCorrectIndex(index: number): void {
+        this.correctIndices.add(index);
     }
 }
 

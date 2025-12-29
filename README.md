@@ -12,8 +12,8 @@ A Wordle-inspired word guessing game built with TypeScript, following the MVC (M
 - ⌨️ **Keyboard Navigation**: Arrow keys, Enter, and Backspace support
 - 📋 **Paste Support**: Paste entire words to fill multiple inputs at once
 - 🔄 **Auto-fill Correct Letters**: Correctly positioned letters are automatically filled in subsequent rows
+- 💡 **Hint System**: Reveals random unrevealed letters from the answer (limited to 3 hints per game)
 - 🔁 **Restart Functionality**: Start a new game with a fresh word
-- 💡 **Hint Button**: Placeholder for future hint feature
 - 🌐 **Random Word API**: Fetches random 6-letter words from an external API
 
 ## Getting Started
@@ -91,6 +91,7 @@ This project follows the **MVC (Model-View-Controller)** architectural pattern:
 - Handles word fetching from external API
 - Validates guesses and determines letter states
 - Tracks game progress (win/loss conditions)
+- Provides hint functionality (reveals random unrevealed letters)
 
 ### View (`GameView`, `InputView`)
 - `GameView`: Manages the overall game UI, input rows, buttons, and messages
@@ -101,6 +102,7 @@ This project follows the **MVC (Model-View-Controller)** architectural pattern:
 - Handles user interactions (keyboard, clicks, paste)
 - Manages game flow and state transitions
 - Processes input validation and navigation
+- Handles hint requests and updates UI accordingly
 
 ## How It Works
 
@@ -143,7 +145,7 @@ The game uses the [Random Word API](https://random-word-api.herokuapp.com/) to f
 
 - The game is configured for 6-letter words and 6 attempts
 - In development mode, the correct answer is logged to the console
-- The hint feature is currently a placeholder
+- Hint feature: Players can use up to 3 hints per game, each revealing a random unrevealed letter
 - All input is automatically converted to uppercase
 - Only alphabetic characters are accepted in input fields
 

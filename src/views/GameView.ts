@@ -1,4 +1,4 @@
-import { CSS_CLASSES } from '../constants/CssClasses';
+import { CSS_CLASSES } from '../constants/Constants.ts';
 
 /**
  * GameView - Manages the main game UI and DOM interactions
@@ -166,7 +166,8 @@ class GameView {
                input.classList.remove(
                    CSS_CLASSES.INPUT_IN_PLACE,
                    CSS_CLASSES.INPUT_CORRECT,
-                   CSS_CLASSES.INPUT_WRONG
+                   CSS_CLASSES.INPUT_WRONG,
+                   CSS_CLASSES.INPUT_HINT
                );
             });
         }
@@ -181,6 +182,34 @@ class GameView {
 
     getRowCount(): number {
         return this.inputRows.length;
+    }
+
+    getFirstEnabledInput(rowIndex: number): HTMLInputElement | null {
+        const inputs = this.getRowInputs(rowIndex);
+
+        for (let i = 0; i < inputs.length; ++i) {
+            if (!inputs[i].disabled) {
+                return inputs[i];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Reveals a hint by setting a letter value and styling it
+     * @param rowIndex - The row to reveal the hint in
+     * @param inputIndex - The input index to reveal
+     * @param letter - The letter to display
+     */
+    revealHint(rowIndex: number, inputIndex: number, letter: string): void {
+        this.setInputValue(rowIndex, inputIndex, letter);
+        this.addInputClass(rowIndex, inputIndex, CSS_CLASSES.INPUT_HINT);
+
+        const inputs = this.getRowInputs(rowIndex);
+        if (inputIndex >= 0 && inputIndex < inputs.length) {
+            inputs[inputIndex].disabled = true;
+        }
     }
 }
 

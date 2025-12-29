@@ -2,7 +2,7 @@ import GameModel from "../models/GameModel.ts";
 import GameView from "../views/GameView.ts";
 import InputView from "../views/InputView.ts";
 import Direction, { type DirectionType } from "./Direction.ts";
-import { CSS_CLASSES, HINT_MESSAGE_TIMEOUT } from "../constants/CssClasses.ts";
+import {CSS_CLASSES, HINT_MESSAGE_TIMEOUT, MAX_HINT_COUNT} from "../constants/Constants.ts";
 
 /**
  * GameController - Coordinates game logic between Model and View
@@ -399,13 +399,41 @@ class GameController {
         if (this.hintTimeoutId) {
             clearTimeout(this.hintTimeoutId);
         }
-        
-        this.view.updateMessage('Hint feature coming soon!');
-        
+
+        const currentRow = this.model.getCurrentRow();
+        const hintIndex = this.model.getHintIndex();
+
+        if (hintIndex === -1) {
+            this.view.updateMessage('All letters have been revealed!');
+            this.hintTimeoutId = window.setTimeout(() => {
+                this.view.clearMessage();
+                this.hintTimeoutId = null;
+            }, HINT_MESSAGE_TIMEOUT);
+            return;
+        }
+
+        const letter = this.model.getLetterAtIndex(hintIndex);
+
+        this.view.revealHint(currentRow, hintIndex, letter);
+
+        this.model.addCorrectIndex(hintIndex);
+        this.model.incrementHint();
+
+        const rowValues = this.view.getRowValues(currentRow);
+        const isFull = this.model.isRowFull(rowValues);
+        this.view.setCheckButtonEnabled(isFull);
+
+        this.view.updateMessage(`Hint: Letter at position ${hintIndex + 1} is "${letter}"`);
+
         this.hintTimeoutId = window.setTimeout(() => {
             this.view.clearMessage();
             this.hintTimeoutId = null;
         }, HINT_MESSAGE_TIMEOUT);
+
+        const hintCount = this.model.getHintCount();
+        if (hintCount >= MAX_HINT_COUNT) {
+            this.view.setHintButtonEnabled(false);
+        }
     }
 }
 
