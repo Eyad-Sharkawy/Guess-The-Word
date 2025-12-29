@@ -1,14 +1,38 @@
+/**
+ * InputView - Wraps an individual input field with event handling
+ * 
+ * Manages input validation, event listeners, and provides a clean interface
+ * for interacting with individual letter input fields.
+ * 
+ * @class InputView
+ */
 class InputView {
     private input: HTMLInputElement;
     private rowIndex: number;
     private inputIndex: number;
 
+    /**
+     * Creates a new InputView instance
+     * @param input - The HTML input element to wrap
+     * @param rowIndex - The row index this input belongs to
+     * @param inputIndex - The index of this input within its row
+     */
     constructor(input: HTMLInputElement, rowIndex: number, inputIndex: number) {
         this.input = input;
         this.rowIndex = rowIndex;
         this.inputIndex = inputIndex;
     }
 
+    /**
+     * Attaches event listeners to the input element
+     * 
+     * Handles input validation (only letters, uppercase), keyboard navigation,
+     * and paste events for multi-letter input.
+     * 
+     * @param onInput - Callback for input events (rowIndex, inputIndex, value)
+     * @param onKeydown - Callback for keydown events (rowIndex, inputIndex, event)
+     * @param onPaste - Optional callback for paste events (rowIndex, startIndex, letters[])
+     */
     attachEventListeners(
         onInput: (rowIndex: number, inputIndex: number, value: string) => void,
         onKeydown: (rowIndex: number, inputIndex: number, value: KeyboardEvent) => void,

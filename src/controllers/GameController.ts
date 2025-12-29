@@ -4,6 +4,14 @@ import InputView from "../views/InputView.ts";
 import Direction, { type DirectionType } from "./Direction.ts";
 import { CSS_CLASSES, HINT_MESSAGE_TIMEOUT } from "../constants/CssClasses.ts";
 
+/**
+ * GameController - Coordinates game logic between Model and View
+ * 
+ * Handles user interactions, manages game flow, and processes input validation.
+ * Follows the MVC pattern as the Controller component.
+ * 
+ * @class GameController
+ */
 class GameController {
     private readonly model: GameModel;
     private readonly view: GameView;
@@ -15,11 +23,20 @@ class GameController {
     private hintTimeoutId: number | null = null;
     private readonly isDevelopment: boolean = import.meta.env.DEV;
 
+    /**
+     * Creates a new GameController instance
+     * @param model - The game model instance
+     * @param view - The game view instance
+     */
     constructor(model: GameModel, view: GameView) {
         this.model = model;
         this.view = view;
     }
 
+    /**
+     * Initializes the game by fetching a word, setting up input views, and starting the game
+     * @throws {Error} If word fetching fails, falls back to default word "WORDLE"
+     */
     async init(): Promise<void> {
         try {
             const answer = await this.model.fetchAnswer();
@@ -40,6 +57,9 @@ class GameController {
         this.start();
     }
 
+    /**
+     * Starts the game by enabling the first row of inputs
+     */
     start(): void {
         this.view.enableRow(0);
     }

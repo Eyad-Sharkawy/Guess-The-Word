@@ -1,6 +1,14 @@
 import LetterState from "./LetterState.ts";
 import LetterResult from "./LetterResult.ts";
 
+/**
+ * GameModel - Manages game state and business logic
+ * 
+ * Handles word fetching, guess validation, letter state evaluation,
+ * and game progress tracking. Follows the MVC pattern as the Model component.
+ * 
+ * @class GameModel
+ */
 class GameModel {
     private correctAnswer = '';
     private currentRow = 0;
@@ -12,26 +20,54 @@ class GameModel {
     private readonly apiTimeout = 5000;
     private readonly apiRetries = 3;
 
+    /**
+     * Gets the correct answer word
+     * @returns The correct answer as an uppercase string
+     */
     getCorrectAnswer(): string {
         return this.correctAnswer;
     }
 
+    /**
+     * Gets the current active row index (0-based)
+     * @returns The current row index
+     */
     getCurrentRow(): number {
         return this.currentRow;
     }
 
+    /**
+     * Gets a copy of the set of indices where letters are correctly positioned
+     * @returns A new Set containing correct position indices
+     */
     getCorrectIndices(): Set<number> {
         return new Set(this.correctIndices);
     }
 
+    /**
+     * Gets the maximum number of rows (attempts) allowed
+     * @returns The maximum number of rows
+     */
     getMaxRows(): number {
         return this.maxRows;
     }
 
+    /**
+     * Gets the required word length
+     * @returns The word length
+     */
     getWordLength(): number {
         return this.wordLength;
     }
 
+    /**
+     * Fetches a random word from the external API
+     * 
+     * Attempts to fetch a word with retry logic (3 attempts) and timeout handling.
+     * 
+     * @returns A promise that resolves to a random 6-letter word
+     * @throws {Error} If all retry attempts fail
+     */
     async fetchAnswer(): Promise<string> {
         let lastError: Error | null = null;
         
@@ -80,6 +116,15 @@ class GameModel {
         throw lastError || new Error('Failed to fetch word after all retries');
     }
 
+    /**
+     * Sets the correct answer word
+     * 
+     * Validates that the answer is a non-empty string of the correct length
+     * and contains only alphabetic characters. Converts to uppercase.
+     * 
+     * @param answer - The answer word to set
+     * @throws {Error} If the answer is invalid (empty, wrong length, or non-alphabetic)
+     */
     setAnswer(answer: string): void {
         if (!answer || typeof answer !== 'string') {
             throw new Error('Answer must be a non-empty string');
@@ -102,6 +147,20 @@ class GameModel {
         this.correctAnswer = trimmedAnswer;
     }
 
+    /**
+     * Checks a guess against the correct answer
+     * 
+     * Evaluates each letter in the guess and determines its state:
+     * - IN_PLACE: Letter is correct and in the right position
+     * - CORRECT: Letter is in the word but in the wrong position
+     * - WRONG: Letter is not in the word
+     * 
+     * Tracks newly discovered correct positions and updates the internal state.
+     * 
+     * @param guess - The guessed word (will be converted to uppercase)
+     * @returns An object containing letter results and newly found correct indices
+     * @throws {Error} If the answer hasn't been set or guess length is incorrect
+     */
     checkRow(guess: string): { results: LetterResult[]; newCorrectIndices: Set<number> } {
         if (!this.correctAnswer || this.correctAnswer.length === 0) {
             throw new Error('Cannot check row: answer has not been set');
@@ -151,6 +210,11 @@ class GameModel {
         return { results, newCorrectIndices };
     }
 
+    /**
+     * Checks if a row is completely filled with valid letters
+     * @param letters - Array of letter strings to check
+     * @returns True if the row has the correct length and all letters are non-empty
+     */
     isRowFull(letters: string[]): boolean {
         if (!Array.isArray(letters)) {
             return false;
@@ -159,30 +223,56 @@ class GameModel {
         return letters.length === this.wordLength && letters.every(letter => letter && letter.trim().length > 0);
     }
 
+    /**
+     * Resets the game state to initial values
+     * Clears the answer, resets current row to 0, and clears correct indices
+     */
     reset(): void {
         this.correctAnswer = '';
         this.currentRow = 0;
         this.correctIndices.clear();
     }
 
+    /**
+     * Increments the current row index (moves to next attempt)
+     * Only increments if not already at the maximum row
+     */
     incrementRow(): void {
         if (this.currentRow < this.maxRows - 1) {
             ++this.currentRow;
         }
     }
 
+    /**
+     * Checks if the game has been won
+     * @param guess - The guessed word to check
+     * @returns True if the guess matches the correct answer (case-insensitive)
+     */
     isGameWon(guess: string): boolean {
         return guess.toUpperCase() === this.correctAnswer;
     }
 
+    /**
+     * Checks if the game has been lost (no more attempts remaining)
+     * @returns True if the current row is at or beyond the last allowed row
+     */
     isGameLost(): boolean {
         return this.currentRow >= this.maxRows - 1;
     }
 
+    /**
+     * Gets the count of correctly positioned letters
+     * @returns The number of correct positions found
+     */
     getCorrectCount(): number {
         return this.correctIndices.size;
     }
 
+    /**
+     * Checks if a specific position index has a correct letter
+     * @param index - The position index to check
+     * @returns True if the position has a correctly placed letter
+     */
     isPositionCorrect(index: number): boolean {
         return this.correctIndices.has(index);
     }

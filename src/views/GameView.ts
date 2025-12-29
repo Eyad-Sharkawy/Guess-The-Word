@@ -1,5 +1,13 @@
 import { CSS_CLASSES } from '../constants/CssClasses';
 
+/**
+ * GameView - Manages the main game UI and DOM interactions
+ * 
+ * Handles input rows, buttons, messages, and visual feedback.
+ * Follows the MVC pattern as the View component.
+ * 
+ * @class GameView
+ */
 class GameView {
     private readonly inputRows: NodeListOf<HTMLElement>;
     private readonly checkWordBtn: HTMLButtonElement;
